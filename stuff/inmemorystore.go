@@ -8,11 +8,13 @@ import (
 type InMemoryStore struct {
 	lock         sync.Mutex
 	id2Component map[int]*Component
+	fts          *FulltextSearh
 }
 
 func NewInMemoryStore() *InMemoryStore {
 	return &InMemoryStore{
 		id2Component: make(map[int]*Component),
+		fts : NewFulltextSearch(),
 	}
 }
 func (s *InMemoryStore) EditRecord(id int, update ModifyFun) (bool, string) {
@@ -34,6 +36,7 @@ func (s *InMemoryStore) EditRecord(id int, update ModifyFun) (bool, string) {
 		if s.id2Component[id] != found {
 			return false, "Editing conflict. Discarding this edit. Sorry."
 		}
+		s.fts.Update(&toEdit)
 		s.id2Component[id] = &toEdit
 		return true, ""
 	}
@@ -44,4 +47,8 @@ func (s *InMemoryStore) FindById(id int) *Component {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	return s.id2Component[id]
+}
+
+func (d *InMemoryStore) Search(search_term string) []*Component {
+	return d.fts.Search(search_term)
 }

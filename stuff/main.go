@@ -3,7 +3,7 @@ package main
 
 import (
 	"compress/gzip"
-	"database/sql"
+	_ "database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -284,9 +284,6 @@ func main() {
 	imageDir := flag.String("imagedir", "img-srv", "Directory with images")
 	staticResource := flag.String("staticdir", "static", "Directory with static resources")
 	port := flag.Int("port", 2000, "Port to serve from")
-	dbName := flag.String("db", "stuff", "Database to connect")
-	dbUser := flag.String("dbuser", "hzeller", "Database user")
-	dbPwd := flag.String("dbpwd", "", "Database password")
 	logfile := flag.String("logfile", "", "Logfile to write interesting events")
 
 	flag.Parse()
@@ -302,19 +299,7 @@ func main() {
 		log.SetOutput(f)
 	}
 
-	db, err := sql.Open("postgres",
-		fmt.Sprintf("user=%s dbname=%s password=%s",
-			*dbUser, *dbName, *dbPwd))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var store StuffStore
-	store, err = NewDBBackend(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//store = NewInMemoryStore()
+	store := NewInMemoryStore()
 	http.HandleFunc("/img/", func(w http.ResponseWriter, r *http.Request) {
 		imageServe(len("/img/"), *imageDir, *staticResource, w, r)
 	})
