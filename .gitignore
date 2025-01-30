@@ -3,3 +3,4 @@ stuff/stuff
 stuff/stuff-database.db
 bin
 .envrc
+.direnv/
