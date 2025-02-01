@@ -32,13 +32,17 @@ body {font-family:sans-serif;}
 }
 .missing {
     background-color: #eeeeee;
+    padding: 14px 14px;
 }
 .poor {
     background-color: #ff8888;
+    padding: 14px 14px;
 }
 .fair {
     background-color: #ffff88;
+    padding: 14px 14px;
 }
 .good {
     background-color: #88ff88;
+    padding: 14px 14px;
 }
